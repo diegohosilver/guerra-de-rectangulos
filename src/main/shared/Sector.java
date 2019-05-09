@@ -1,6 +1,4 @@
-package main.implementations;
-
-import main.shared.Position;
+package main.shared;
 
 public class Sector {
 	private int fila;
