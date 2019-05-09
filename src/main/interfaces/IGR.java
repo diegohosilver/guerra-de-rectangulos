@@ -7,5 +7,5 @@ public interface IGR {
 	public abstract int area(int numeroJugador);
 	public abstract void eliminarRect();
 	public abstract void jugar();
-	public ArrayList<IRectangulo> rectangulos();
+	public ArrayList<IRectangulo> rectangulos(int numeroJugador);
 }
