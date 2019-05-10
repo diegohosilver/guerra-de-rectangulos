@@ -4,9 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import main.interfaces.IGR;
-import main.interfaces.IRectangulo;
-import main.interfaces.IJugador;
+import main.interfaces.*;
+import main.shared.Sector;
 
 public class GR implements IGR {
 	private int alto;
@@ -19,6 +18,14 @@ public class GR implements IGR {
 		this.jugadores.put(2, new Jugador());
 		this.alto = alto;
 		this.ancho = ancho;
+		this.jugadorActual = 1;
+	}
+	
+	private int terminarTurno() {
+		jugadorActual ++;
+		// Si jugadorActual excede la cantidad de jugadores, devolvemos el primero de la lista
+		if (jugadorActual > jugadores.size()) jugadorActual = 1;
+		return jugadorActual;
 	}
 	
 	private IJugador getJugadorSiguiente() {
@@ -28,6 +35,10 @@ public class GR implements IGR {
 		if (jugadorSiguiente > jugadores.size()) return jugadores.get(1);
 		else return jugadores.get(jugadorSiguiente);
 	}
+	
+	private IJugador getJugadorActual() {
+		return jugadores.get(jugadorActual);
+	}
 
 	@Override
 	public IRectangulo ultimoRectangulo() {
@@ -36,7 +47,7 @@ public class GR implements IGR {
 
 	@Override
 	public int area(int numeroJugador) {
-		return jugadores.get(numeroJugador).getArea();
+		return ((Jugador) jugadores.get(numeroJugador)).getArea();
 	}
 
 	@Override
@@ -46,14 +57,41 @@ public class GR implements IGR {
 
 	@Override
 	public void jugar() {
-		// TODO Auto-generated method stub
+		Dado dado = new Dado();
+		ArrayList<Integer> tiradas = dado.tirar(2);
+		ArrayList<Sector> sectores = new ArrayList<Sector>();
+		int cantidadSectores = tiradas.get(0) * tiradas.get(1);
 		
+		for (int i = 0; i < cantidadSectores; i++) {
+			sectores.add(new Sector(1, 1));
+		}
+		
+		Jugador jugador = (Jugador) getJugadorActual();
+		Rectangulo rectangulo = new Rectangulo(sectores);
+		jugador.addRectangulo(rectangulo);
+		
+		terminarTurno();
 	}
 
 	@Override
 	public ArrayList<IRectangulo> rectangulos(int numeroJugador) {
-		return jugadores.get(numeroJugador).getRectangulos();
+		return ((Jugador) jugadores.get(numeroJugador)).getRectangulos();
 	}
 	
+	@Override
+	public boolean equals(IGR gr) {
+		if (((GR) gr).getAlto() == alto && ((GR) gr).getAncho() == ancho) {
+			return true;
+		}
+		
+		return false;
+	}
 	
+	public int getAlto() {
+		return alto;
+	}
+	
+	public int getAncho() {
+		return ancho;
+	}
 }
