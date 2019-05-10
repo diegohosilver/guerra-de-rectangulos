@@ -27,18 +27,22 @@ public class Jugador implements IJugador {
 		this.rectangulos.remove(getIndiceRandom());
 	}
 
+	@Override
 	public int getArea() {
 		return area;
 	}
 
+	@Override
 	public ArrayList<IRectangulo> getRectangulos() {
 		return rectangulos;
 	}
 	
+	@Override
 	public int getCantidadRectangulos() {
 		return rectangulos.size();
 	}
 	
+	@Override
 	public void addRectangulo(IRectangulo rectangulo) {
 		this.rectangulos.add(rectangulo);
 		this.area += ((Rectangulo) rectangulo).area();

@@ -18,10 +18,12 @@ public class Rectangulo implements IRectangulo {
 		return null;
 	}
 	
+	@Override
 	public ArrayList<Sector> getSectores() {
 		return sectores;
 	}
 	
+	@Override
 	public int area() {
 		return sectores.size();
 	}

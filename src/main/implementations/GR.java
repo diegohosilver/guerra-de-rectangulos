@@ -87,10 +87,12 @@ public class GR implements IGR {
 		return false;
 	}
 	
+	@Override
 	public int getAlto() {
 		return alto;
 	}
 	
+	@Override
 	public int getAncho() {
 		return ancho;
 	}
