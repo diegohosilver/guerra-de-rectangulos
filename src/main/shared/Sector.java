@@ -1,6 +1,4 @@
-package main.implementations;
-
-import main.shared.Position;
+package main.shared;
 
 public class Sector {
 	private int fila;
@@ -11,6 +9,11 @@ public class Sector {
 		this.fila = fila;
 		this.columna = columna;
 		this.posicion = posicion;
+	}
+	
+	public Sector(int fila, int columna) {
+		this.fila = fila;
+		this.columna = columna;
 	}
 	
 	public int getFila() {
