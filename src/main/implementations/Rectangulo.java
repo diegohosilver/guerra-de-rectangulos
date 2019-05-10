@@ -2,7 +2,7 @@ package main.implementations;
 
 import java.util.ArrayList;
 
-import main.interfaces.IRectangulo;
+import main.interfaces.*;
 import main.shared.Sector;
 
 public class Rectangulo implements IRectangulo {
@@ -13,11 +13,6 @@ public class Rectangulo implements IRectangulo {
 	}
 
 	@Override
-	public int area() {
-		return sectores.size();
-	}
-
-	@Override
 	public ArrayList<Sector> posicionesDisponibles() {
 		// TODO Auto-generated method stub
 		return null;
@@ -25,6 +20,10 @@ public class Rectangulo implements IRectangulo {
 	
 	public ArrayList<Sector> getSectores() {
 		return sectores;
+	}
+	
+	public int area() {
+		return sectores.size();
 	}
 	
 	
