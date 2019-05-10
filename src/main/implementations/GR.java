@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import main.interfaces.*;
+import main.shared.Medida;
 import main.shared.Sector;
 
 public class GR implements IGR {
@@ -47,7 +48,7 @@ public class GR implements IGR {
 
 	@Override
 	public int area(int numeroJugador) {
-		return ((Jugador) jugadores.get(numeroJugador)).getArea();
+		return jugadores.get(numeroJugador).getArea();
 	}
 
 	@Override
@@ -75,12 +76,12 @@ public class GR implements IGR {
 
 	@Override
 	public ArrayList<IRectangulo> rectangulos(int numeroJugador) {
-		return ((Jugador) jugadores.get(numeroJugador)).getRectangulos();
+		return jugadores.get(numeroJugador).getRectangulos();
 	}
 	
 	@Override
 	public boolean equals(IGR gr) {
-		if (((GR) gr).getAlto() == alto && ((GR) gr).getAncho() == ancho) {
+		if (gr.getMedidas().getAlto() == alto && gr.getMedidas().getAncho() == ancho) {
 			return true;
 		}
 		
@@ -88,12 +89,7 @@ public class GR implements IGR {
 	}
 	
 	@Override
-	public int getAlto() {
-		return alto;
-	}
-	
-	@Override
-	public int getAncho() {
-		return ancho;
+	public Medida<Integer, Integer> getMedidas() {
+		return new Medida<Integer, Integer>(alto, ancho);
 	}
 }

@@ -45,6 +45,6 @@ public class Jugador implements IJugador {
 	@Override
 	public void addRectangulo(IRectangulo rectangulo) {
 		this.rectangulos.add(rectangulo);
-		this.area += ((Rectangulo) rectangulo).area();
+		this.area += rectangulo.area();
 	}
 }
