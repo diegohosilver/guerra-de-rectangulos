@@ -1,11 +1,13 @@
 package main.interfaces;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
+import main.shared.Medida;
 import main.shared.Sector;
 
 public interface IRectangulo {
-	public abstract ArrayList<Sector> posicionesDisponibles();
-	public abstract ArrayList<Sector> getSectores();
+	public abstract HashMap<Integer, Sector> getSectores();
 	public abstract int area();
+	public abstract Sector getUltimoSector();
+	public abstract Medida<Integer, Integer> getMedidas();
 }
