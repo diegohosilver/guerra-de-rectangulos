@@ -2,11 +2,12 @@ package main.interfaces;
 
 import java.util.HashMap;
 
+import main.implementations.Rectangulo;
 import main.shared.Medida;
 
 public interface IGR {
 	public abstract HashMap<Integer, IRectangulo> rectangulos(int numeroJugador);
-	public abstract IRectangulo ultimoRectangulo();
+	public abstract Rectangulo ultimoRectangulo();
 	public abstract int area(int numeroJugador);
 	public abstract void eliminarRect();
 	public abstract boolean equals(IGR gr);

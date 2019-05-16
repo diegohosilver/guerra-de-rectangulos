@@ -11,9 +11,9 @@ public class Jugador implements IJugador {
 	private HashMap<Integer, IRectangulo> rectangulos = new HashMap<Integer, IRectangulo>();
 	private Random random = new Random();
 	
-	private int getIndiceRandom() {
-		// Obtener un valor random entre 0 y la cantidad de rectangulos
-		int indice = random.nextInt(rectangulos.size());
+	private int getKeyRandom() {
+		// Obtener un valor random entre 1 y la cantidad de rectangulos
+		int indice = random.nextInt(rectangulos.size()) + 1;
 		return indice;
 	}
 	
@@ -24,7 +24,8 @@ public class Jugador implements IJugador {
 	
 	@Override
 	public void eliminarRectanguloRandom() {
-		this.rectangulos.remove(getIndiceRandom());
+		this.rectangulos.remove(getKeyRandom());
+		this.area = rectangulos.size();
 	}
 
 	@Override
