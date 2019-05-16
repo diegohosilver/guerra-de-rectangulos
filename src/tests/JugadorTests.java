@@ -48,4 +48,17 @@ public class JugadorTests {
 		assertTrue(jugador.getCantidadRectangulos() == 0);
 	}
 
+	@Test
+	public void jugador_CuandoSeVerificaSiTieneSector_DevuelveVerdadero() { 
+		HashMap<Integer, Sector> sectores = new HashMap<Integer, Sector>() {
+			{
+				put(1, new Sector(1, 1));
+				put(2, new Sector(3, 4));
+			}
+		};
+		
+		jugador.addRectangulo(1, new Rectangulo(sectores));
+		
+		assertTrue(jugador.sectorOcupado(3, 4));
+	}
 }
