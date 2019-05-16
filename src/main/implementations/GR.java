@@ -217,6 +217,7 @@ public class GR implements IGR {
 		
 		if (puedoEscribir) {
 			getJugadorActual().addRectangulo(getJugadorActual().getCantidadRectangulos() + 1, rectangulo);
+			ultimoRectangulo = rectangulo;
 		}
 	}
 	
@@ -262,6 +263,7 @@ public class GR implements IGR {
 		
 		if (puedoEscribir) {
 			getJugadorActual().addRectangulo(getJugadorActual().getCantidadRectangulos() + 1, rectangulo);
+			ultimoRectangulo = rectangulo;
 		}
 	}
 
@@ -283,7 +285,7 @@ public class GR implements IGR {
 	}
 
 	@Override
-	public IRectangulo ultimoRectangulo() {
+	public Rectangulo ultimoRectangulo() {
 		return ultimoRectangulo;
 	}
 

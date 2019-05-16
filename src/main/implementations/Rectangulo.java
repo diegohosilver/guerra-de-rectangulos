@@ -10,6 +10,10 @@ public class Rectangulo implements IRectangulo {
 	private Medida<Integer, Integer> medidas;
 	private HashMap<Integer, Sector> sectores;
 	
+	public Rectangulo(HashMap<Integer, Sector> sectores) {
+		this.sectores = sectores;
+	}
+	
 	public Rectangulo(Medida<Integer, Integer> medidas, HashMap<Integer, Sector> sectores) {
 		this.medidas = medidas;
 		this.sectores = sectores;
