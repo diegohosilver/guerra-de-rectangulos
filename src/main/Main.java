@@ -5,10 +5,24 @@ import main.implementations.GR;
 public class Main {
 
 	public static void main(String[] args) {
-		GR gr = new GR(10, 10);
-		gr.jugar(2, 2);
-		gr.jugar(2, 2);
-		gr.jugar(2, 2);
-		System.out.println("Area: " + gr.area(1));
+		// Automático
+		GR gr = new GR(21,20);
+		String ganador = gr.jugar();
+		while (ganador == "") {
+			ganador = gr.jugar();
+			System.out.println("..." + gr.ultimoRectangulo().getMedidas().getAncho() +","
+					+ gr.ultimoRectangulo().getMedidas().getAlto());
+		}
+		System.out.println(gr);
+
+		// Semi automático
+		GR gr2 = new GR(21,22);
+		String ganador2;
+		ganador2 = gr2.jugar();
+		ganador2 = gr2.jugar();
+		ganador2 = gr2.jugar();
+		gr2.eliminarRect();
+		System.out.println(gr2);
+
 	}
 }
