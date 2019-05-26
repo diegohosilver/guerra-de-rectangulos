@@ -2,11 +2,10 @@ package main.implementations;
 
 import java.util.HashMap;
 
-import main.interfaces.*;
 import main.shared.Medida;
 import main.shared.Sector;
 
-public class Rectangulo implements IRectangulo {
+public class Rectangulo {
 	private Medida<Integer, Integer> medidas;
 	private HashMap<Integer, Sector> sectores;
 	
@@ -19,25 +18,19 @@ public class Rectangulo implements IRectangulo {
 		this.sectores = sectores;
 	}
 	
-	@Override
 	public HashMap<Integer, Sector> getSectores() {
 		return sectores;
 	}
 	
-	@Override
 	public int area() {
 		return sectores.size();
 	}
 	
-	@Override
 	public Sector getUltimoSector() {
 		return sectores.get(sectores.size());
 	}
 	
-	@Override
 	public Medida<Integer, Integer> getMedidas() {
 		return medidas;
 	}
-	
-	
 }

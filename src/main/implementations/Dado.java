@@ -3,9 +3,7 @@ package main.implementations;
 import java.util.ArrayList;
 import java.util.Random;
 
-import main.interfaces.IDado;
-
-public class Dado implements IDado {
+public class Dado {
 	
 	private Random random = new Random();
 	
@@ -15,7 +13,6 @@ public class Dado implements IDado {
 		return valorDado;
 	}
 
-	@Override
 	public ArrayList<Integer> tirar(int cantidadDados) {
 		ArrayList<Integer> tiradas = new ArrayList<Integer>();
 		
@@ -26,5 +23,4 @@ public class Dado implements IDado {
 		
 		return tiradas;
 	}
-
 }

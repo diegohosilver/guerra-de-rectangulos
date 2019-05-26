@@ -3,12 +3,11 @@ package main.implementations;
 import java.util.HashMap;
 import java.util.Random;
 
-import main.interfaces.*;
 import main.shared.Sector;
 
-public class Jugador implements IJugador {
+public class Jugador{
 	private int area = 0;
-	private HashMap<Integer, IRectangulo> rectangulos = new HashMap<Integer, IRectangulo>();
+	private HashMap<Integer, Rectangulo> rectangulos = new HashMap<Integer, Rectangulo>();
 	private Random random = new Random();
 	
 	private int getKeyRandom() {
@@ -17,43 +16,36 @@ public class Jugador implements IJugador {
 		return indice;
 	}
 	
-	@Override
-	public IRectangulo getUltimoRectangulo() {
+	public Rectangulo getUltimoRectangulo() {
 		return rectangulos.get(getCantidadRectangulos());
 	}
 	
-	@Override
 	public void eliminarRectanguloRandom() {
 		this.rectangulos.remove(getKeyRandom());
 		this.area = rectangulos.size();
 	}
 
-	@Override
 	public int getArea() {
 		return area;
 	}
 
-	@Override
-	public HashMap<Integer, IRectangulo> getRectangulos() {
+	public HashMap<Integer, Rectangulo> getRectangulos() {
 		return rectangulos;
 	}
 	
-	@Override
 	public int getCantidadRectangulos() {
 		return rectangulos.size();
 	}
 	
-	@Override
-	public void addRectangulo(int order, IRectangulo rectangulo) {
+	public void addRectangulo(int order, Rectangulo rectangulo) {
 		this.rectangulos.put(order, rectangulo);
 		this.area += rectangulo.area();
 	}
 	
-	@Override
 	public boolean sectorOcupado(int fila, int columna) {
 		Sector sector = new Sector(fila, columna);
 		
-		for (IRectangulo rectangulo : rectangulos.values()) {
+		for (Rectangulo rectangulo : rectangulos.values()) {
 			if (rectangulo.getSectores().containsValue(sector)) {
 				return true;
 			}
