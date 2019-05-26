@@ -5,17 +5,16 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import main.interfaces.*;
 import main.shared.Medida;
 import main.shared.Position;
 import main.shared.Sector;
 
-public class GR implements IGR {
+public class GR {
 	private int alto;
 	private int ancho;
 	private Rectangulo ultimoRectangulo;
 	private int jugadorActual;
-	private HashMap<Integer, IJugador> jugadores = new HashMap<Integer, IJugador>();
+	private HashMap<Integer, Jugador> jugadores = new HashMap<Integer, Jugador>();
 	private HashMap<Integer, Medida<Integer, Integer>> posicionesIniciales = new HashMap<Integer, Medida<Integer, Integer>>();
 	private int stackErrores;
 	private String ganador;
@@ -44,7 +43,7 @@ public class GR implements IGR {
 		return stackErrores == 2;
 	}
 
-	private IJugador getJugadorSiguiente() {
+	private Jugador getJugadorSiguiente() {
 		int jugadorSiguiente = jugadorActual + 1;
 
 		// Si jugadorSiguiente excede la cantidad de jugadores, devolvemos el primero de la lista
@@ -52,11 +51,11 @@ public class GR implements IGR {
 		else return jugadores.get(jugadorSiguiente);
 	}
 
-	private IJugador getJugadorActual() {
+	private Jugador getJugadorActual() {
 		return jugadores.get(jugadorActual);
 	}
 	
-	private IRectangulo generarRectangulo(Medida<Integer, Integer> coordenadasIniciales, Medida<Integer, Integer> medidas, int offsetY, int offsetX) {
+	private Rectangulo generarRectangulo(Medida<Integer, Integer> coordenadasIniciales, Medida<Integer, Integer> medidas, int offsetY, int offsetX) {
 		HashMap<Integer, Sector> sectores = new HashMap<Integer, Sector>();
 		int alto = coordenadasIniciales.getAlto();
 		int ancho = coordenadasIniciales.getAncho();
@@ -72,7 +71,7 @@ public class GR implements IGR {
 		return new Rectangulo(medidas, sectores);
 	}
 	
-	private boolean puedoEscribir(IRectangulo rectangulo) {
+	private boolean puedoEscribir(Rectangulo rectangulo) {
 		Sector primerSector = rectangulo.getSectores().get(1);
 		Sector ultimoSector = rectangulo.getUltimoSector();
 		
@@ -86,7 +85,7 @@ public class GR implements IGR {
 		boolean libre = true;
 		
 		// Revisar si los sectores están libres
-		for (Entry<Integer, IJugador> jugador : jugadores.entrySet()) {
+		for (Entry<Integer, Jugador> jugador : jugadores.entrySet()) {
 			for (Entry<Integer, Sector> sector : rectangulo.getSectores().entrySet()) {
 				Sector flagSector = sector.getValue();
 				libre = libre && !jugador.getValue().sectorOcupado(flagSector.getFila(), flagSector.getColumna());
@@ -334,41 +333,41 @@ public class GR implements IGR {
 		}
 	}
 
-	@Override
+	
 	public Rectangulo ultimoRectangulo() {
 		return ultimoRectangulo;
 	}
 
-	@Override
+	
 	public int area(int numeroJugador) {
 		return jugadores.get(numeroJugador).getArea();
 	}
 
-	@Override
+	
 	public void eliminarRect() {
 		getJugadorSiguiente().eliminarRectanguloRandom();		
 	}
 
-	@Override
+	
 	public String jugar() {
 		Dado dado = new Dado();
 		realizarJugada(dado.tirar(2));		
 		return ganador;
 	}
 
-	@Override
+	
 	public String jugar(Integer dado1, Integer dado2) {
 		realizarJugada(new ArrayList<Integer>(Arrays.asList(dado1, dado2)));
 		return ganador;
 	}
 
-	@Override
-	public HashMap<Integer, IRectangulo> rectangulos(int numeroJugador) {
+	
+	public HashMap<Integer, Rectangulo> rectangulos(int numeroJugador) {
 		return jugadores.get(numeroJugador).getRectangulos();
 	}
 
-	@Override
-	public boolean equals(IGR gr) {
+	
+	public boolean equals(GR gr) {
 		if (gr.getMedidas().getAlto() == alto && gr.getMedidas().getAncho() == ancho) {
 			return true;
 		}
@@ -376,7 +375,7 @@ public class GR implements IGR {
 		return false;
 	}
 
-	@Override
+	
 	public Medida<Integer, Integer> getMedidas() {
 		return new Medida<Integer, Integer>(alto, ancho);
 	}
