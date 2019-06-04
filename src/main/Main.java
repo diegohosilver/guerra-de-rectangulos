@@ -10,8 +10,8 @@ public class Main {
 		String ganador = gr.jugar();
 		while (ganador == "") {
 			ganador = gr.jugar();
-			System.out.println("..." + gr.ultimoRectangulo().getMedidas().getAncho() +","
-					+ gr.ultimoRectangulo().getMedidas().getAlto());
+			System.out.println("..." + gr.ultimoRectangulo().alto() +","
+					+ gr.ultimoRectangulo().ancho());
 		}
 		System.out.println(gr);
 
