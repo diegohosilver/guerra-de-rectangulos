@@ -3,13 +3,13 @@ package main.implementations;
 import java.util.ArrayList;
 import java.util.Random;
 
+import main.shared.Util;
+
 public class Dado {
-	
-	private Random random = new Random();
 	
 	private int tirarDado() {
 		// Obtener un valor random entre 1 y 6
-		int valorDado = random.nextInt(6) + 1;
+		int valorDado = Util.numeroRandom(1, 6);
 		return valorDado;
 	}
 

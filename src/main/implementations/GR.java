@@ -44,7 +44,8 @@ public class GR {
 	}
 
 	// (No actualiza la última coordenada/rectangulo!)
-	public void eliminarRect(Coordenada coordenada) {
+	public void eliminarRect(int jugador) {
+		Coordenada coordenada = (Coordenada) _tablero.getRectangulos(jugador).keySet().toArray()[0];
 		_tablero.eliminarRect(coordenada);
 	}
 
@@ -53,15 +54,7 @@ public class GR {
 		// Si jugadorActual excede la cantidad de jugadores, devolvemos el primero de la lista
 		if (_jugadorActual > _cantidadJugadores) _jugadorActual = 1;
 		// Si stackErrores tiene 2, terminamos el juego;
-		return _cantidadTurnosSinJugar == 2;
-	}
-
-	private int getJugadorSiguiente() {
-		int jugadorSiguiente = _jugadorActual + 1;
-
-		// Si jugadorSiguiente excede la cantidad de jugadores, devolvemos el primero de la lista
-		if (jugadorSiguiente > _cantidadJugadores) return 1;
-		else return jugadorSiguiente;
+		return _cantidadTurnosSinJugar == _cantidadJugadores;
 	}
 
 	private boolean puedoEscribir(Coordenada coordenada, Rectangulo rectangulo) {
@@ -92,88 +85,63 @@ public class GR {
 		// Recorro todos los rectángulos del jugador actual
 		for (Map.Entry<Coordenada, Rectangulo> rectangulo : _tablero.getRectangulos(_jugadorActual).entrySet()) {
 			ArrayList<Sector> sectores = Util.generarSectores(rectangulo.getKey(), rectangulo.getValue());
-			
+
 			boolean libreArriba = true, libreAbajo = true, libreIzquierda = true, libreDerecha = true;
 
 			for (int i = 0; i < sectores.size(); i ++) {
 				Sector sector = sectores.get(i);
-				
+
 				// Arriba
 				if (sector.getFila() - 1 >= 0) {
-					libreArriba = libreArriba && _tablero.sectorLibre(new Coordenada(sector.getFila() - 1, sector.getColumna()));
+					libreArriba = _tablero.sectorLibre(new Coordenada(sector.getColumna(), sector.getFila() - 1));
 					if (libreArriba) {
 						sectorLibre = new Sector(sector.getFila() - 1, sector.getColumna(), Position.ARRIBA);
-						continue;
+						if (realizarJugada(tiradas, sectorLibre)) {
+							return;
+						}
 					}
-					else {
-						sectorLibre = null;
-					}
-				}
-				else {
-					sectorLibre = null;
 				}
 
 				// Abajo
 				if (sector.getFila() + 1 <= _tablero.largo() - 1) {
-					libreAbajo = libreAbajo && _tablero.sectorLibre(new Coordenada(sector.getFila() + 1, sector.getColumna()));
+					libreAbajo = _tablero.sectorLibre(new Coordenada(sector.getColumna(), sector.getFila() + 1));
 					if (libreAbajo) {
 						sectorLibre = new Sector(sector.getFila() + 1, sector.getColumna(), Position.ABAJO);
-						continue;
+						if (realizarJugada(tiradas, sectorLibre)) {
+							return;
+						}
 					}
-					else {
-						sectorLibre = null;
-					}
-				}
-				else {
-					sectorLibre = null;
 				}
 
 				// Derecha
 				if (sector.getColumna() + 1 <= _tablero.ancho() - 1) {
-					libreDerecha = libreDerecha && _tablero.sectorLibre(new Coordenada(sector.getFila(), sector.getColumna() + 1));
+					libreDerecha = _tablero.sectorLibre(new Coordenada(sector.getColumna() + 1, sector.getFila()));
 					if (libreDerecha) {
 						sectorLibre = new Sector(sector.getFila(), sector.getColumna() + 1, Position.DERECHA);
-						continue;
+						if (realizarJugada(tiradas, sectorLibre)) {
+							return;
+						}
 					}
-					else {
-						sectorLibre = null;
-					}
-				}
-				else {
-					sectorLibre = null;
 				}
 
 				// Izquierda
 				if (sector.getColumna() - 1 >= 0) {
-					libreIzquierda = libreIzquierda && _tablero.sectorLibre(new Coordenada(sector.getFila(), sector.getColumna() - 1));
+					libreIzquierda = _tablero.sectorLibre(new Coordenada(sector.getColumna() - 1, sector.getFila()));
 					if (libreIzquierda) {
 						sectorLibre = new Sector(sector.getFila(), sector.getColumna() - 1, Position.IZQUIERDA);
-						continue;
-					}
-					else {
-						sectorLibre = null;
-					}
-				}
-				else {
-					sectorLibre = null;
-				}
-			}
-			
-			// Si luego de recorrer todos los jugadores, vemos que el sector está libre entonces intentamos jugar
-			if (sectorLibre != null) {
-				if (libreArriba || libreAbajo || libreIzquierda || libreDerecha) {
-					if (realizarJugada(tiradas, sectorLibre)) {
-						return;
+						if (realizarJugada(tiradas, sectorLibre)) {
+							return;
+						}
 					}
 				}
 			}
 		}
-		
+
 		_cantidadTurnosSinJugar ++;
 	}
 
 	private boolean realizarJugada(ArrayList<Integer> tiradas, Sector sectorInicial) {
-		Coordenada coordenada = new Coordenada(sectorInicial.getFila(), sectorInicial.getColumna());
+		Coordenada coordenada = new Coordenada(sectorInicial.getColumna(), sectorInicial.getFila());
 		Rectangulo rectangulo = new Rectangulo(tiradas.get(0), tiradas.get(1));	
 		Position sectorARectangulo = sectorInicial.getPosicion();
 		int offsetY = 0;
@@ -190,24 +158,38 @@ public class GR {
 		default:
 			break;
 		}
-		
+
 		coordenada = new Coordenada(coordenada.x + offsetX, coordenada.y + offsetY);
 		boolean puedoEscribir = puedoEscribir(coordenada, rectangulo);
 
-		// Validar si puedo escribir, sino espejo el rectángulo
+		// Validar si puedo escribir, sino espejo el rectángulo avanzando de a un sector
 		if (!puedoEscribir) {
 			switch(sectorARectangulo) {
 			case ARRIBA:
 			case ABAJO:
-				offsetX = coordenada.x - (rectangulo.ancho() - 1);
-				coordenada = new Coordenada(coordenada.x + offsetX, coordenada.y + offsetY);
-				puedoEscribir = puedoEscribir(coordenada, rectangulo);
+				int ejeXActual = coordenada.x;
+				offsetX = coordenada.x;
+				while(offsetX > ejeXActual - (rectangulo.ancho() - 1)) {
+					offsetX--;
+					coordenada = new Coordenada(offsetX, coordenada.y);
+					puedoEscribir = puedoEscribir(coordenada, rectangulo);	
+					if (puedoEscribir) {
+						break;
+					}
+				}
 				break;
 			case IZQUIERDA:
 			case DERECHA:
-				offsetY = coordenada.y - (rectangulo.alto() - 1);
-				coordenada = new Coordenada(coordenada.x + offsetX, coordenada.y + offsetY);
-				puedoEscribir = puedoEscribir(coordenada, rectangulo);
+				int ejeYActual = coordenada.y;
+				offsetY = coordenada.y;
+				while(offsetY > ejeYActual - (rectangulo.alto() - 1)) {
+					offsetY--;
+					coordenada = new Coordenada(coordenada.x, offsetY);
+					puedoEscribir = puedoEscribir(coordenada, rectangulo);	
+					if (puedoEscribir) {
+						break;
+					}
+				}
 				break;
 			}
 		}
@@ -225,26 +207,47 @@ public class GR {
 	private String devolverGanador() {
 		int mayor = 0;
 		int ganador = 0;
-		
+
 		for (int i = 0; i < _cantidadJugadores; i ++) {
 			int area = _tablero.area(i + 1);
-			
+
 			if (area > mayor) {
 				mayor = area;
 				ganador = i + 1;
 			}
 		}
-		
+
 		return Integer.toString(ganador);		
 	}
 
 	private void realizarJugada(ArrayList<Integer> tiradas) {
 		if (_tablero.area(_jugadorActual) == 0) {
-			realizarJugadaInicial(tiradas);
+			int intentos = 0;
+			boolean jugadaRealizada = false;
+
+			while (intentos < 10) {
+				Sector sector = new Sector(Util.numeroRandom(0, _tablero.largo() - 1), Util.numeroRandom(0, _tablero.ancho() - 1), Position.ABAJO);
+				jugadaRealizada = realizarJugada(tiradas, sector);
+
+				if (jugadaRealizada) {
+					break;
+				}
+
+				intentos ++;
+			}
+
+			if (!jugadaRealizada) {
+				_cantidadTurnosSinJugar++;
+			}
+			else {
+				_cantidadTurnosSinJugar = 0;
+			}
 		}
 		else {
 			buscarSectorLibre(tiradas);
 		}
+
+		_cantidadTurnos++;
 
 		if (terminarJuego()) {
 			StringBuilder str = new StringBuilder("El ganador es el jugador número ");
@@ -272,9 +275,9 @@ public class GR {
 
 	@Override
 	public String toString() {
-		return "cantTurnos:" + _cantTurnos + "\n" + " area1:" + _tablero.area(1) + "\n" + "area2:" + _tablero.area(2) + "\n" + " ganador:" + _ganador + "\n" + "tablero=" + "\n" + _tablero ;
+		return "cantTurnos:" + _cantidadTurnos + "\n" + " area1:" + _tablero.area(1) + "\n" + "area2:" + _tablero.area(2) + "\n" + " ganador:" + _ganador + "\n" + "tablero=" + "\n" + _tablero ;
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -284,7 +287,7 @@ public class GR {
 		if (getClass() != obj.getClass())
 			return false;
 		GR other = (GR) obj;
-		if (_cantTurnos != other._cantTurnos)
+		if (_cantidadTurnos != other._cantidadTurnos)
 			return false;
 		if (_tablero == null) {
 			if (other._tablero != null)

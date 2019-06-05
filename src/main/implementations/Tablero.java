@@ -16,7 +16,7 @@ public class Tablero {
 
 	public Tablero(int largo, int ancho, int cantidadJugadores) {
 		for (int i = 0; i < cantidadJugadores; i++) {
-			this.rectangulosPorJugador.put(i, new HashMap<Coordenada, Rectangulo>());
+			this.rectangulosPorJugador.put(i + 1, new HashMap<Coordenada, Rectangulo>());
 		}
 
 		this.cantidadJugadores = cantidadJugadores;
@@ -53,19 +53,21 @@ public class Tablero {
 	}
 
 	public void desPintar(Coordenada coordenada, Tupla<Integer, Integer> tamaño) {
-		for (int columna = coordenada.x; columna < coordenada.x + tamaño.getA(); columna ++) {
-			for (int fila = coordenada.y; fila < coordenada.y + tamaño.getB(); fila ++) {
-				_tablero[columna][fila] = 0;
+		for (int fila = coordenada.y; fila < coordenada.y + tamaño.getB(); fila ++) {
+			for (int columna = coordenada.x; columna < coordenada.x + tamaño.getA(); columna ++) {
+				_tablero[fila][columna] = 0;
 			}
 		}
 	}
 
 	public void pintar(Coordenada coordenada, Tupla<Integer, Integer> tamaño, Integer jugador) {
-		for (int columna = coordenada.x; columna < coordenada.x + tamaño.getA(); columna ++) {
-			for (int fila = coordenada.y; fila < coordenada.y + tamaño.getB(); fila ++) {
-				_tablero[columna][fila] = jugador;
+		for (int fila = coordenada.y; fila < coordenada.y + tamaño.getB(); fila ++) {
+			for (int columna = coordenada.x; columna < coordenada.x + tamaño.getA(); columna ++) {
+				_tablero[fila][columna] = jugador;
 			}
 		}
+
+		rectangulosPorJugador.get(jugador).put(coordenada, new Rectangulo(tamaño.getB(), tamaño.getA()));
 	}
 
 	public void eliminarRect(Coordenada coordenada) {
@@ -73,17 +75,17 @@ public class Tablero {
 			Rectangulo rectangulo = rectangulosPorJugador.get(i + 1).get(coordenada);
 
 			if (rectangulo != null) {
-				desPintar(coordenada, new Tupla<Integer, Integer>(rectangulo.alto(), rectangulo.ancho()));
+				desPintar(coordenada, new Tupla<Integer, Integer>(rectangulo.ancho(), rectangulo.alto()));
 				rectangulosPorJugador.get(i + 1).remove(coordenada);
 				break;
 			}
 		}
 	}
-	
+
 	public boolean sectorLibre(Coordenada coordenada) {
-		return _tablero[coordenada.x][coordenada.y] == 0;
+		return _tablero[coordenada.y][coordenada.x] == 0;
 	}
-	
+
 	public HashMap<Coordenada, Rectangulo> getRectangulos(Integer jugador) {
 		return rectangulosPorJugador.get(jugador);
 	}
@@ -99,7 +101,7 @@ public class Tablero {
 		}
 		return sb.toString();
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

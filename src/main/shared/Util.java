@@ -2,6 +2,7 @@ package main.shared;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import main.implementations.Coordenada;
 import main.implementations.Rectangulo;
@@ -29,5 +30,11 @@ public class Util {
         }
 
         return list;
+    }
+    
+    public static int numeroRandom(int minimo, int maximo) {
+    	Random random = new Random();
+    	
+    	return random.nextInt(maximo) + minimo;
     }
 }
