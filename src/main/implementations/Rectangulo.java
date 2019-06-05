@@ -1,36 +1,39 @@
 package main.implementations;
 
-import java.util.HashMap;
-
-import main.shared.Medida;
-import main.shared.Sector;
-
 public class Rectangulo {
-	private Medida<Integer, Integer> medidas;
-	private HashMap<Integer, Sector> sectores;
+	private int alto;
+	private int ancho;
 	
-	public Rectangulo(HashMap<Integer, Sector> sectores) {
-		this.sectores = sectores;
+	public Rectangulo(int alto, int ancho) {
+		this.alto = alto;
+		this.ancho = ancho;
 	}
 	
-	public Rectangulo(Medida<Integer, Integer> medidas, HashMap<Integer, Sector> sectores) {
-		this.medidas = medidas;
-		this.sectores = sectores;
+	public int alto() {
+		return this.alto;
 	}
 	
-	public HashMap<Integer, Sector> getSectores() {
-		return sectores;
+	public int ancho() {
+		return this.ancho;
 	}
 	
 	public int area() {
-		return sectores.size();
+		return alto * ancho;
 	}
-	
-	public Sector getUltimoSector() {
-		return sectores.get(sectores.size());
-	}
-	
-	public Medida<Integer, Integer> getMedidas() {
-		return medidas;
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Rectangulo other = (Rectangulo) obj;
+		if (alto != other.alto)
+			return false;
+		if (ancho != other.ancho)
+			return false;
+		return true;
 	}
 }

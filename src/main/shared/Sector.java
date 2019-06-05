@@ -32,6 +32,11 @@ public class Sector {
 		return true;
 	}
 	
+	@Override
+	public String toString() {
+		return "fila: " + Integer.toString(fila) + ", columna:" + Integer.toString(columna) + ", posicion: " + posicion;
+	}
+	
 	public int getFila() {
 		return fila;
 	}
