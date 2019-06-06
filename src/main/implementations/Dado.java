@@ -3,19 +3,21 @@ package main.implementations;
 import java.util.ArrayList;
 import java.util.Random;
 
-import main.interfaces.IDado;
+import main.shared.Util;
 
-public class Dado implements IDado {
-	
-	private Random random = new Random();
+public class Dado {
 	
 	private int tirarDado() {
 		// Obtener un valor random entre 1 y 6
-		int valorDado = random.nextInt(6) + 1;
+		int valorDado = Util.numeroRandom(1, 6);
 		return valorDado;
 	}
-
-	@Override
+	
+	/**
+	 * Tirar dados la cantidad de veces solicitada. 
+	 * @param cantidadDados - Cantidad de dados a tirar.
+	 * @return ArrayList<Integer>
+	 */
 	public ArrayList<Integer> tirar(int cantidadDados) {
 		ArrayList<Integer> tiradas = new ArrayList<Integer>();
 		
@@ -26,5 +28,4 @@ public class Dado implements IDado {
 		
 		return tiradas;
 	}
-
 }
