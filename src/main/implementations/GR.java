@@ -370,7 +370,18 @@ public class GR {
 	 */
 	@Override
 	public String toString() {
-		return "cantTurnos:" + _cantidadTurnos + "\n" + " area1:" + _tablero.area(1) + "\n" + "area2:" + _tablero.area(2) + "\n" + " ganador:" + _ganador + "\n" + "tablero=" + "\n" + _tablero ;
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("cantTurnos: " + _cantidadTurnos + "\n");
+		
+		for (int i = 0; i < _cantidadJugadores; i ++) {
+			sb.append("area" + i + ": " + _tablero.area(i + 1) + "\n");
+		}
+		
+		sb.append("ganador: " + _ganador + "\n");
+		sb.append("tablero: \n" + _tablero);
+		
+		return sb.toString();
 	}
 
 	/**
