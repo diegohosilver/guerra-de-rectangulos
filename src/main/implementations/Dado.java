@@ -12,7 +12,12 @@ public class Dado {
 		int valorDado = Util.numeroRandom(1, 6);
 		return valorDado;
 	}
-
+	
+	/**
+	 * Tirar dados la cantidad de veces solicitada. 
+	 * @param cantidadDados - Cantidad de dados a tirar.
+	 * @return ArrayList<Integer>
+	 */
 	public ArrayList<Integer> tirar(int cantidadDados) {
 		ArrayList<Integer> tiradas = new ArrayList<Integer>();
 		

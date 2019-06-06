@@ -8,6 +8,12 @@ import main.implementations.Coordenada;
 import main.implementations.Rectangulo;
 
 public class Util {
+	/**
+	 * Devolver un listado de sectores a partir de una coordenada inicial y las medidas de un rectángulo.
+	 * @param coordenada - Coordenada inicial (superior izquierda).
+	 * @param rectangulo - Largo y ancho del rectángulo.
+	 * @return ArrayList<Sector>
+	 */
 	public static ArrayList<Sector> generarSectores(Coordenada coordenada, Rectangulo rectangulo) {
 		ArrayList<Sector> sectores = new ArrayList<Sector>();
 		
@@ -19,19 +25,13 @@ public class Util {
 		
 		return sectores;
 	}
-	
-    public static <T> List<T> intersectar(List<T> list1, List<T> list2) {
-        List<T> list = new ArrayList<T>();
-
-        for (T t : list1) {
-            if(list2.contains(t)) {
-                list.add(t);
-            }
-        }
-
-        return list;
-    }
     
+	/**
+	 * Devolver un número entero aleatorio dentro de los límites establecidos.
+	 * @param minimo - Valor límite mínimo.
+	 * @param maximo - Valor límite máximo.
+	 * @return Integer
+	 */
     public static int numeroRandom(int minimo, int maximo) {
     	Random random = new Random();
     	

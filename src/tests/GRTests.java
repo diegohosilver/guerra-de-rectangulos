@@ -67,5 +67,27 @@ public class GRTests {
 		// se elimina uno al azar pero hay uno solo para eliminar.
 		assertEquals(gr1.area(1) + gr1.area(2), area);
 	}
+	
+	@Test(expected = RuntimeException.class)
+	public void GR_cuandoNumeroJugadorEsMenorOIgualAUno_ArrojaExcepcion() {
+		GR gr = new GR(1, 1, 1);
+	}
+	
+	@Test(expected = RuntimeException.class)
+	public void GR_cuandoLargoTableroEsMenorOIgualACero_ArrojaExcepcion() {
+		GR gr = new GR(0, 1, 2);
+	}
+	
+	@Test(expected = RuntimeException.class)
+	public void GR_cuandoAnchoTableroEsMenorOIgualACero_ArrojaExcepcion() {
+		GR gr = new GR(1, 0, 2);
+	}
+	
+	@Test(expected = RuntimeException.class)
+	public void GR_cuandoJugadorNoExiste_ArrojaExcepcion() {
+		gr1.jugar();
+		
+		gr1.eliminarRect(2);
+	}
 
 }

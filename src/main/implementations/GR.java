@@ -3,9 +3,7 @@ package main.implementations;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import main.shared.Tupla;
 import main.shared.Util;
@@ -22,7 +20,15 @@ public class GR {
 	private Rectangulo _ultimoRectangulo;
 	private Coordenada _ultimaCoordenada;
 
+	/**
+	 * Constructor de GR
+	 * @param largo - Cantidad de filas del tablero
+	 * @param ancho - Cantidad de columnas del tablero
+	 * @param cantidadJugadores - Cantidad de jugadores
+	 */
 	public GR(int largo, int ancho, int cantidadJugadores) {
+		validacionesIniciales(largo, ancho, cantidadJugadores);
+		
 		_jugadorActual = 1;
 		_tablero = new Tablero(largo, ancho, cantidadJugadores);
 		_cantidadJugadores = cantidadJugadores;
@@ -30,33 +36,79 @@ public class GR {
 		_cantidadTurnos=0;
 		_ganador = "";
 	}
+	
+	/**
+	 * Validar inicialización de GR
+	 * @param largo - Cantidad de filas del tablero
+	 * @param ancho - Cantidad de columnas del tablero
+	 * @param cantidadJugadores - Cantidad de jugadores
+	 */
+	private void validacionesIniciales(int largo, int ancho, int cantidadJugadores) {
+		if (largo <= 0  || ancho <= 0) {
+			throw new RuntimeException("El tablero debe tener largo y ancho positivo");
+		}
+		
+		if (cantidadJugadores <= 1) {
+			throw new RuntimeException("Debe haber por lo menos 2 jugadores");
+		}
+	}
+	
+	/**
+	 * Primera jugada de cada jugador. Establece una posición inicial aleatoria para el primer rectángulo
+	 * @param tiradas - Dados que definen el largo y el ancho del rectángulo
+	 */
+	private void realizarJugadaInicial(ArrayList<Integer> tiradas) {
+		int intentos = 0;
+		boolean jugadaRealizada = false;
 
-	public int area(int jugador) {
-		return _tablero.area(jugador);
+		while (intentos < 10) {
+			Sector sector = new Sector(Util.numeroRandom(0, _tablero.largo() - 1), Util.numeroRandom(0, _tablero.ancho() - 1), Position.ABAJO);
+			jugadaRealizada = realizarJugada(tiradas, sector);
+
+			if (jugadaRealizada) {
+				break;
+			}
+
+			intentos ++;
+		}
+
+		if (!jugadaRealizada) {
+			_cantidadTurnosSinJugar++;
+		}
+		else {
+			_cantidadTurnosSinJugar = 0;
+		}
 	}
 
-	public Rectangulo ultimoRectangulo() {
-		return _ultimoRectangulo;
+	/**
+	 * Realizar el ciclo del juego, validando si el jugador en cuestión juega por primera vez o no.
+	 * Además se encarga de contar la cantidad de turnos y finalizar el juego si corresponde.
+	 * @param tiradas - Dados que determinan el largo y el ancho del rectángulo
+	 */
+	private void ejecutarCicloJuego(ArrayList<Integer> tiradas) {
+		if (_tablero.area(_jugadorActual) == 0) {
+			realizarJugadaInicial(tiradas);
+		}
+		else {
+			buscarSectorLibreYRealizarJugada(tiradas);
+		}
+
+		_cantidadTurnos++;
+
+		if (terminarJuego()) {
+			StringBuilder str = new StringBuilder("El ganador es el jugador número ");
+			str.append(devolverGanador());
+			_ganador =  str.toString();
+		}
 	}
 
-	public Coordenada ultimaCoordenada() {
-		return _ultimaCoordenada;
-	}
-
-	// (No actualiza la última coordenada/rectangulo!)
-	public void eliminarRect(int jugador) {
-		Coordenada coordenada = (Coordenada) _tablero.getRectangulos(jugador).keySet().toArray()[0];
-		_tablero.eliminarRect(coordenada);
-	}
-
-	private boolean terminarJuego() {
-		_jugadorActual ++;
-		// Si jugadorActual excede la cantidad de jugadores, devolvemos el primero de la lista
-		if (_jugadorActual > _cantidadJugadores) _jugadorActual = 1;
-		// Si stackErrores tiene 2, terminamos el juego;
-		return _cantidadTurnosSinJugar == _cantidadJugadores;
-	}
-
+	/**
+	 * Validar si es posible escribir el rectángulo en la coordenada dada.
+	 * Verifica que el rectángulo esté dentro de los límites del tablero, como así también que los sectores esten libres.
+	 * @param coordenada - Coordenada inicial (superior izquierda)
+	 * @param rectangulo - Largo y ancho del rectángulo
+	 * @return true si puede escribir, false si no puede escribir
+	 */
 	private boolean puedoEscribir(Coordenada coordenada, Rectangulo rectangulo) {
 		Sector primerSector = new Sector(coordenada.y, coordenada.x);
 		Sector ultimoSector = new Sector(rectangulo.alto() + coordenada.y, rectangulo.ancho() + coordenada.x);
@@ -69,7 +121,7 @@ public class GR {
 		if (!(ultimoSector.getFila() < _tablero.largo() && ultimoSector.getColumna() < _tablero.ancho()))
 			return false;
 
-		// Revisar si los sectores están libres recorriendo los rectángulos de cada jugador
+		// Revisar si los sectores están libres recorriendo el tablero
 		for (Sector sector: sectoresRectangulo) {
 			if (!_tablero.sectorLibre(new Coordenada(sector.getColumna(), sector.getFila()))) {
 				return false;
@@ -79,7 +131,11 @@ public class GR {
 		return true;
 	}
 
-	private void buscarSectorLibre(ArrayList<Integer> tiradas) {
+	/**
+	 * Busca algún sector libre contiguo al área del jugador e intenta realizar una jugada.
+	 * @param tiradas - Dados que determinan el largo y el ancho del rectángulo.
+	 */
+	private void buscarSectorLibreYRealizarJugada(ArrayList<Integer> tiradas) {
 		Sector sectorLibre = null;
 
 		// Recorro todos los rectángulos del jugador actual
@@ -137,9 +193,16 @@ public class GR {
 			}
 		}
 
+		// Si no pudo realizar jugada, incrementamos el contador de errores
 		_cantidadTurnosSinJugar ++;
 	}
 
+	/**
+	 * Intentar realizar jugada en el sector libre encontrado.
+	 * @param tiradas - Dados que determinan el largo y el ancho del rectángulo.
+	 * @param sectorInicial - Sector libre contiguo al área del jugador en turno.
+	 * @return true si pudo realizar la escritura del rectángulo, false si el lugar elegido no está disponible.
+	 */
 	private boolean realizarJugada(ArrayList<Integer> tiradas, Sector sectorInicial) {
 		Coordenada coordenada = new Coordenada(sectorInicial.getColumna(), sectorInicial.getFila());
 		Rectangulo rectangulo = new Rectangulo(tiradas.get(0), tiradas.get(1));	
@@ -197,13 +260,18 @@ public class GR {
 		if (puedoEscribir) {
 			_tablero.pintar(coordenada, new Tupla<Integer, Integer>(rectangulo.ancho(), rectangulo.alto()), _jugadorActual);
 			_ultimoRectangulo = rectangulo;
+			_ultimaCoordenada = coordenada;
 			_cantidadTurnosSinJugar = 0;
 			return true;
 		}
 
 		return false;
 	}
-
+	
+	/**
+	 * Imprime el número del jugador ganador.
+	 * @return número en formato String.
+	 */
 	private String devolverGanador() {
 		int mayor = 0;
 		int ganador = 0;
@@ -219,65 +287,95 @@ public class GR {
 
 		return Integer.toString(ganador);		
 	}
-
-	private void realizarJugada(ArrayList<Integer> tiradas) {
-		if (_tablero.area(_jugadorActual) == 0) {
-			int intentos = 0;
-			boolean jugadaRealizada = false;
-
-			while (intentos < 10) {
-				Sector sector = new Sector(Util.numeroRandom(0, _tablero.largo() - 1), Util.numeroRandom(0, _tablero.ancho() - 1), Position.ABAJO);
-				jugadaRealizada = realizarJugada(tiradas, sector);
-
-				if (jugadaRealizada) {
-					break;
-				}
-
-				intentos ++;
-			}
-
-			if (!jugadaRealizada) {
-				_cantidadTurnosSinJugar++;
-			}
-			else {
-				_cantidadTurnosSinJugar = 0;
-			}
-		}
-		else {
-			buscarSectorLibre(tiradas);
-		}
-
-		_cantidadTurnos++;
-
-		if (terminarJuego()) {
-			StringBuilder str = new StringBuilder("El ganador es el jugador número ");
-			str.append(devolverGanador());
-			_ganador =  str.toString();
-		}
+	
+	/**
+	 * Luego de cada turno validar si el juego debería terminar.
+	 * @return true si el juego finalizó, false si todavía hay posibilidades de seguir jugando
+	 */
+	private boolean terminarJuego() {
+		_jugadorActual ++;
+		// Si jugadorActual excede la cantidad de jugadores, devolvemos el primero de la lista
+		if (_jugadorActual > _cantidadJugadores) _jugadorActual = 1;
+		// Si stackErrores tiene 2, terminamos el juego;
+		return _cantidadTurnosSinJugar == _cantidadJugadores;
 	}
 
+	/**
+	 * Jugar "tirando" los dados.
+	 * @return Datos del jugador ganador si es que el juego finalizó.
+	 */
 	public String jugar() {
 		Dado dado = new Dado();
-		realizarJugada(dado.tirar(2));		
+		ejecutarCicloJuego(dado.tirar(2));		
 		return _ganador;
 	}
 
-
+	/**
+	 * Jugar con dados fijos.
+	 * @param dado1 - Valor del primer dado.
+	 * @param dado2 - Valor del segundo dado.
+	 * @return Datos del jugador ganador si es que el juego finalizó
+	 */
 	public String jugar(Integer dado1, Integer dado2) {
-		realizarJugada(new ArrayList<Integer>(Arrays.asList(dado1, dado2)));
+		ejecutarCicloJuego(new ArrayList<Integer>(Arrays.asList(dado1, dado2)));
 		return _ganador;
 	}
 
+	/**
+	 * Devolver el área ocupada por el jugador dado.
+	 * @param jugador - Número de jugador.
+	 * @return Cantidad de sectores ocupados.
+	 */
+	public int area(int jugador) {
+		return _tablero.area(jugador);
+	}
 
+	/**
+	 * Devolver el último rectángulo creado.
+	 * @return - Rectángulo.
+	 */
+	public Rectangulo ultimoRectangulo() {
+		return _ultimoRectangulo;
+	}
+
+	/**
+	 * Devolver última coordenada creada para generar un rectángulo.
+	 * @return - Coordenada.
+	 */
+	public Coordenada ultimaCoordenada() {
+		return _ultimaCoordenada;
+	}
+
+	/**
+	 * Eliminar rectángulo del jugador dado.
+	 * No actualiza el último rectángulo guardado, ni la última coordenada guardada.
+	 * @param jugador - Número de jugador.
+	 */
+	public void eliminarRect(int jugador) {
+		Coordenada coordenada = (Coordenada) _tablero.getRectangulos(jugador).keySet().toArray()[0];
+		_tablero.eliminarRect(coordenada);
+	}
+
+	/**
+	 * Devolver listado de rectángulos del jugador dado.
+	 * @param jugador - Número de jugador
+	 * @return Collection<Rectangulo>
+	 */
 	public Collection<Rectangulo> rectangulos(int jugador) {
 		return _tablero.getRectangulos(jugador).values();
 	}
 
+	/**
+	 * Devolver información general de GR.
+	 */
 	@Override
 	public String toString() {
 		return "cantTurnos:" + _cantidadTurnos + "\n" + " area1:" + _tablero.area(1) + "\n" + "area2:" + _tablero.area(2) + "\n" + " ganador:" + _ganador + "\n" + "tablero=" + "\n" + _tablero ;
 	}
 
+	/**
+	 * Comparar GR a otro GR.
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
